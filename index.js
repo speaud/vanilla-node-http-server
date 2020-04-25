@@ -49,7 +49,8 @@ class Customer {
 
 let endpoints = [
 	new Endpoint('GET', '/products', getProducts),
-	new Endpoint('POST', '/carts', createCart)
+	new Endpoint('POST', '/carts', createCart),
+	new Endpoint('GET', '/carts/[0-9]+', getCart)
 ]
 
 let carts = [
@@ -102,6 +103,15 @@ function createCart(req, res) {
 		const json = JSON.stringify(new JSONResponse({ totalActiveCartCount: carts.length }, [createdCart]));
 		res.end(json)
 	})
+}
+
+function getCart(req, res) {
+	const cartId = parseInt(req.url.split('/')[2])
+	const cart = carts.filter(c => c.id == cartId)
+	
+	res.writeHead(200, { 'Content-Type': 'application.json' });
+	const json = JSON.stringify(new JSONResponse({}, cart));
+	res.end(json)
 }
 
 http
