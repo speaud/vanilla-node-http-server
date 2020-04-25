@@ -1,0 +1,11 @@
+version: '3'
+services:
+  node-api:
+    build: ./
+    ports:
+      - "${LOCALHOST_API_PORT}:${CONTAINER_API_PORT}" # enclosed by \"\" as expected by standard library parsing method
+    volumes:
+      - ./:/api
+    environment:
+      - LOCALHOST_API_PORT=${LOCALHOST_API_PORT}
+      - CONTAINER_API_PORT=${CONTAINER_API_PORT}
