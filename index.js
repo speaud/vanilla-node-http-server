@@ -50,7 +50,8 @@ class Customer {
 let endpoints = [
 	new Endpoint('GET', '/products', getProducts),
 	new Endpoint('POST', '/carts', createCart),
-	new Endpoint('GET', '/carts/[0-9]+', getCart)
+	new Endpoint('GET', '/carts/[0-9]+', getCart),
+	new Endpoint('PUT', '/carts/[0-9]+/products', addProductsToCart)
 ]
 
 let carts = [
@@ -112,6 +113,33 @@ function getCart(req, res) {
 	res.writeHead(200, { 'Content-Type': 'application.json' });
 	const json = JSON.stringify(new JSONResponse({}, cart));
 	res.end(json)
+}
+
+function addProductsToCart(req, res) {
+	req.on('data', chunk => {
+		const { productIds, quantities } = reqBodyParser(chunk)
+		
+		const cartId = parseInt(req.url.split('/')[2])
+		// @todo validate the cartId
+		
+		const ps = unescape(productIds).split(',')
+		const qs = unescape(quantities).split(',')
+		let pqs = ps.map((p, i) => [p, qs[i]])
+		// @todo validate the productId and quanity as Q (Q xref with products.product.quanity)
+		
+		carts = carts.filter(c => {
+			if (c.id == cartId) {
+				c.products = [...c.products, ...pqs]
+				c.status = statusLookup.valid
+			}
+
+			return c
+		})
+		
+		res.writeHead(200, { 'Content-Type': 'application.json' });
+		const json = JSON.stringify(new JSONResponse({}, carts));
+		res.end(json)
+	})
 }
 
 http
