@@ -4,6 +4,14 @@ const { products: products_data, search_meta: products_meta } = require('./produ
 
 const { CONTAINER_API_PORT, LOCALHOST_API_PORT } = process.env
 
+const statusLookup = {
+	//cancel: 0,	?
+	created: 1,
+	valid: 2, // some condition met (e.g., more than N items)
+	ordered: 3
+	//delivered: 4	?
+}
+
 const logr = msg => console.log(`>> SERVER: ${msg}`)
 
 class JSONResponse {
@@ -21,9 +29,47 @@ class Endpoint {
 	}
 }
 
+// [from exercise readme] A cart contains an array of products, a recipient (person), delivery address, maybe payment method, maybe other attributes you see important
+class Cart {
+	constructor(id, customerId, products = [], status = statusLookup.created) {
+		this.id = id;
+		this.customerId = customerId;
+		this.products = products; // entries treated as tuple [[product id, quanity], ...]
+		this.status = status;
+	}
+}
+
+class Customer {
+	constructor(id, name, address) {
+		this.id = id;
+		this.name = name;
+		this.address = address;
+	}
+}
+
 let endpoints = [
-	new Endpoint('GET', '/products', getProducts)
+	new Endpoint('GET', '/products', getProducts),
+	new Endpoint('POST', '/carts', createCart)
 ]
+
+let carts = [
+	new Cart(1, 1)
+]
+
+let customers = [
+	new Customer(1, `Phil Adelphia`, `123 Broad St.`)
+]
+
+function reqBodyParser(buffer) {
+	let args = {}
+	buffer
+		.toString()
+		.split('&')
+		.map(x => x.split('='))
+		.forEach(a => args[a[0]] = a[1]);
+		
+	return args
+}
 
 function notFound(req, res) {
 	res.writeHead(404, { 'Content-Type': 'application.json' });
@@ -35,6 +81,27 @@ function getProducts(req, res) {
 	res.writeHead(200, { 'Content-Type': 'application.json' });
 	var json = JSON.stringify(new JSONResponse(products_meta, products_data));
 	res.end(json)
+}
+
+function createCart(req, res) {
+	req.on('data', chunk => {
+		const { customerId } = reqBodyParser(chunk)
+
+		// @todo extend this to validate the customer/cart
+		
+		const id = carts.length + 1
+
+		// @todo 	should validate the customer does not have a current "active" cart before adding
+		//			then handle error 
+
+		const createdCart = new Cart(id, parseInt(customerId))
+	
+		carts.push(createdCart)
+	
+		res.writeHead(200, { 'Content-Type': 'application.json' });
+		const json = JSON.stringify(new JSONResponse({ totalActiveCartCount: carts.length }, [createdCart]));
+		res.end(json)
+	})
 }
 
 http
