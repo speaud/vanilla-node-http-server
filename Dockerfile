@@ -4,4 +4,4 @@ WORKDIR /api
 
 COPY ./ /api
 
-CMD [ "node", "index.js" ]
+CMD [ "node", "watch", "--runtime", "index.js" ]
