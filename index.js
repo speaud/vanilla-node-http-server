@@ -58,6 +58,7 @@ let endpoints = [
 	new Endpoint('GET', '/products', getProducts),
 	new Endpoint('POST', '/carts', createCart),
 	new Endpoint('GET', '/carts/[0-9]+', getCart),
+	new Endpoint('PUT', '/carts/[0-9]+', checkoutCart),
 	new Endpoint('PUT', '/carts/[0-9]+/products', addProductsToCart)
 ]
 
@@ -121,6 +122,20 @@ function getCart(req, res) {
 	
 	const jsonResponse = new JSONResponse({}, cart)
 	jsonResponse.send(res)
+}
+
+function checkoutCart(req, res) {
+	const cartId = parseInt(req.url.split('/')[2])
+
+	carts.forEach(c => {
+		if (c.id == cartId) {
+			c.status = statusLookup.ordered
+		}
+		return c
+	})
+
+	const jsonResponse = new JSONResponse({}, carts.filter(c => c.id == cartId)[0])
+	jsonResponse.send(res)	
 }
 
 function addProductsToCart(req, res) {
