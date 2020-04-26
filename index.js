@@ -130,6 +130,11 @@ function addProductsToCart(req, res) {
 		let { productIds, quantities } = reqBodyParser(chunk)
 		productIds = unescape(productIds).split(',')
 		quantities = unescape(quantities).split(',')
+
+		if (productIds.length != quantities.length) {
+			const jsonResponse = new JSONResponse({ productIds, quantities }, null, { message: `Invalid request body parameters. Entires do not match, missing 'product-quanity' pair. ` })
+			jsonResponse.send(res)
+		}
 		
 		const cartId = parseInt(req.url.split('/')[2])
 		const cartIsActive = carts.filter(c => c.id == cartId && c.status != statusLookup.ordered)
