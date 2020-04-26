@@ -98,12 +98,14 @@ function createCart(req, res) {
 		if (customer.length === 0) {
 			const jsonResponse = new JSONResponse(null, null, { message: 'Invalid customer id', customerId: customerId })
 			jsonResponse.send(res)
+			return
 		}
 
 		const hasActiveCart = carts.filter(c => c.customerId == customerId && c.status != statusLookup.ordered)
 		if (hasActiveCart.length != 0) {
 			const jsonResponse = new JSONResponse({ activeCart: hasActiveCart }, null, { message: 'Customer has active cart', customerId: customerId })
 			jsonResponse.send(res)
+			return
 		}
 
 		const createdCart = new Cart(carts.length + 1, parseInt(customerId))
