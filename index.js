@@ -94,11 +94,12 @@ function createCart(req, res) {
 	req.on('data', chunk => {
 		const { customerId } = reqBodyParser(chunk)
 
-		const customer = customers.filter(c => c.id == customerId)[0]
-		console.log(customer)
-		
-		const id = carts.length + 1
-		
+		const customer = customers.filter(c => c.id == customerId)
+
+		if (customer.length === 0) {
+			const jsonResponse = new JSONResponse(null, null, { message: 'Invalid customer id', customerId: customerId })
+			jsonResponse.send(res)
+		}
 
 		// @todo 	should validate the customer does not have a current "active" cart before adding
 		//			then handle error 
