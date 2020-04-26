@@ -125,14 +125,19 @@ function getCart(req, res) {
 
 function addProductsToCart(req, res) {
 	req.on('data', chunk => {
-		const { productIds, quantities } = reqBodyParser(chunk)
+		let { productIds, quantities } = reqBodyParser(chunk)
+		productIds = unescape(productIds).split(',')
+		quantities = unescape(quantities).split(',')
 		
 		const cartId = parseInt(req.url.split('/')[2])
-		// @todo validate the cartId
+		const cartIsActive = carts.filter(c => c.id == cartId && c.status != statusLookup.ordered)
+
+		if (cartIsActive.length === 0) {
+			const jsonResponse = new JSONResponse({ cardId: cartId }, null, { message: 'Cart does not exist' })
+			jsonResponse.send(res)
+		}
 		
-		const ps = unescape(productIds).split(',')
-		const qs = unescape(quantities).split(',')
-		let pqs = ps.map((p, i) => [p, qs[i]])
+		let pqs = productIds.map((p, i) => [p, quantities[i]])
 		// @todo validate the productId and quanity as Q (Q xref with products.product.quanity)
 		
 		carts = carts.filter(c => {
