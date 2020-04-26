@@ -61,9 +61,7 @@ let endpoints = [
 	new Endpoint('PUT', '/carts/[0-9]+/products', addProductsToCart)
 ]
 
-let carts = [
-	new Cart(1, 1)
-]
+let carts = []
 
 let customers = [
 	new Customer(1, `Phil Adelphia`, `123 Broad St.`)
