@@ -1,9 +1,45 @@
-# TDB
+# TBD - started off as exercise...
 
 ### Requirements
 * Docker 
+```
+~/node-stdlib-api-server (master) $ docker version
+Client: Docker Engine - Community
+ Version:           18.09.2
+ API version:       1.39
+ Go version:        go1.10.8
+ Git commit:        6247962
+ Built:             Sun Feb 10 04:12:39 2019
+ OS/Arch:           darwin/amd64
+ Experimental:      false
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          18.09.2
+  API version:      1.39 (minimum version 1.12)
+  Go version:       go1.10.6
+  Git commit:       6247962
+  Built:            Sun Feb 10 04:13:06 2019
+  OS/Arch:          linux/amd64
+  Experimental:     true
+  ```
 
 ### To run
-Run `docker-compose up --build` then point Postman/send API requests to `localhost:7001`
+Run `docker-compose up --build` then use Postman's Collection Runner to test the API sequence: [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/3aedd494f3505f43766d#?env%5BNSAS%5D=W3sia2V5IjoiQVBJIiwidmFsdWUiOiJsb2NhbGhvc3Q6NzAwMSIsImVuYWJsZWQiOnRydWV9LHsia2V5IjoiQ1VTVE9NRVJfSUQiLCJ2YWx1ZSI6IjEiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6IkNBUlRfSUQiLCJ2YWx1ZSI6IjEiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6IlBST0RVQ1RfSURfMSIsInZhbHVlIjoiIiwiZW5hYmxlZCI6ZmFsc2V9LHsia2V5IjoiUFJPRFVDVF9JRF8wIiwidmFsdWUiOjEwNzQsImVuYWJsZWQiOnRydWV9LHsia2V5IjoiUFJPRFVDVF9JRF8xIiwidmFsdWUiOjI1ODgsImVuYWJsZWQiOnRydWV9XQ==)
 
-TMP MSG - 2 hr time box hit (total=4), will reinit session for cleanup, readme update, then add postman collection and pm environment config 
+> The `--build` flag only required for first run or after changes to the ~/Dockerfile
+
+The following endpoints exists:
+* GET /products
+* POST /carts
+* GET /carts/:cartId
+* PUT /carts/:cartId
+* PUT /carts/:cartId/products
+
+### Decisions Overview / About
+I did not want to use any packages to complete the first stage of this exercise. The initial exercise description was geared towards Node therefore the goal was to only use the Node Standard Library and JavaScript language features.
+
+##### Should have/More time?
+* Stand up a DB container mounted to local directory in place of just using memory
+* Rethink the tuple implementation of product id and quantity, workflow complicated when checking validity of both property values
+*  Better error handling/data validation, helper class or something
