@@ -19,6 +19,12 @@ class JSONResponse {
 		this.meta = meta
 		this.data = data
 	}
+
+	send(res, status) {
+		res.writeHead(status || 200, { 'Content-Type': 'application/json' })
+		const json = JSON.stringify(this)
+		res.end(json)
+	}
 }
 
 class Endpoint {
@@ -74,15 +80,13 @@ function reqBodyParser(buffer) {
 }
 
 function notFound(req, res) {
-	res.writeHead(404, { 'Content-Type': 'application.json' });
-	var json = JSON.stringify(new JSONResponse({ message: `Endpoint is not registered`, method: req.method, url: req.url}));
-	res.end(json)
+	const jsonResponse = new JSONResponse({ message: `Endpoint is not registered`, method: req.method, url: req.url })
+	jsonResponse.send(res, 404)
 }
 
 function getProducts(req, res) {
-	res.writeHead(200, { 'Content-Type': 'application.json' });
-	var json = JSON.stringify(new JSONResponse(products_meta, products_data));
-	res.end(json)
+	const jsonResponse = new JSONResponse(products_meta, products_data)
+	jsonResponse.send(res)
 }
 
 function createCart(req, res) {
@@ -100,9 +104,8 @@ function createCart(req, res) {
 	
 		carts.push(createdCart)
 	
-		res.writeHead(200, { 'Content-Type': 'application.json' });
-		const json = JSON.stringify(new JSONResponse({ totalActiveCartCount: carts.length }, [createdCart]));
-		res.end(json)
+		const jsonResponse = new JSONResponse({ totalActiveCartCount: carts.length }, [createdCart])
+		jsonResponse.send(res)
 	})
 }
 
@@ -110,9 +113,8 @@ function getCart(req, res) {
 	const cartId = parseInt(req.url.split('/')[2])
 	const cart = carts.filter(c => c.id == cartId)
 	
-	res.writeHead(200, { 'Content-Type': 'application.json' });
-	const json = JSON.stringify(new JSONResponse({}, cart));
-	res.end(json)
+	const jsonResponse = new JSONResponse({}, cart)
+	jsonResponse.send(res)
 }
 
 function addProductsToCart(req, res) {
@@ -136,9 +138,8 @@ function addProductsToCart(req, res) {
 			return c
 		})
 		
-		res.writeHead(200, { 'Content-Type': 'application.json' });
-		const json = JSON.stringify(new JSONResponse({}, carts));
-		res.end(json)
+		const jsonResponse = new JSONResponse({}, carts)
+		jsonResponse.send(res)
 	})
 }
 
