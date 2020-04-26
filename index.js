@@ -95,16 +95,18 @@ function createCart(req, res) {
 		const { customerId } = reqBodyParser(chunk)
 
 		const customer = customers.filter(c => c.id == customerId)
-
 		if (customer.length === 0) {
 			const jsonResponse = new JSONResponse(null, null, { message: 'Invalid customer id', customerId: customerId })
 			jsonResponse.send(res)
 		}
 
-		// @todo 	should validate the customer does not have a current "active" cart before adding
-		//			then handle error 
+		const hasActiveCart = carts.filter(c => c.customerId == customerId && c.status != statusLookup.ordered)
+		if (hasActiveCart.length != 0) {
+			const jsonResponse = new JSONResponse({ activeCart: hasActiveCart }, null, { message: 'Customer has active cart', customerId: customerId })
+			jsonResponse.send(res)
+		}
 
-		const createdCart = new Cart(id, parseInt(customerId))
+		const createdCart = new Cart(carts.length + 1, parseInt(customerId))
 	
 		carts.push(createdCart)
 	
