@@ -15,9 +15,10 @@ const statusLookup = {
 const logr = msg => console.log(`>> SERVER: ${msg}`)
 
 class JSONResponse {
-	constructor(meta, data) {
+	constructor(meta, data, error) {
 		this.meta = meta
 		this.data = data
+		this.error = error
 	}
 
 	send(res, status) {
@@ -80,7 +81,7 @@ function reqBodyParser(buffer) {
 }
 
 function notFound(req, res) {
-	const jsonResponse = new JSONResponse({ message: `Endpoint is not registered`, method: req.method, url: req.url })
+	const jsonResponse = new JSONResponse(null, null, { message: `Endpoint is not registered`, method: req.method, url: req.url })
 	jsonResponse.send(res, 404)
 }
 
@@ -93,9 +94,11 @@ function createCart(req, res) {
 	req.on('data', chunk => {
 		const { customerId } = reqBodyParser(chunk)
 
-		// @todo extend this to validate the customer/cart
+		const customer = customers.filter(c => c.id == customerId)[0]
+		console.log(customer)
 		
 		const id = carts.length + 1
+		
 
 		// @todo 	should validate the customer does not have a current "active" cart before adding
 		//			then handle error 
