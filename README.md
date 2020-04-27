@@ -37,9 +37,10 @@ The following endpoints exists:
 * PUT /carts/:cartId/products
 
 ### Decisions Overview / About
-I did not want to use any packages to complete the first stage of this exercise. The initial exercise description was geared towards Node therefore the goal was to only use the Node Standard Library and JavaScript language features.
+The initial exercise description was set up for a Node program therefore this exercise will also use Node. To make it a little more fun I wanted to only use the Node Standard Library and JavaScript language features without dependencies (i.e., no `node_modules`).
 
 ##### Should have/More time?
-* Stand up a DB container mounted to local directory in place of just using memory
+* Stand up a DB container mounted to local directory in place of just using memory (future todo?)
 * Rethink the tuple implementation of product id and quantity, workflow complicated when checking validity of both property values
-*  Better error handling/data validation, helper class or something
+* Better error handling/data validation, helper class or something
+* Build out the process to add products to the cart without duplication and quanity accumulation (initial time box hit)
