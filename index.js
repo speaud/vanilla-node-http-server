@@ -36,7 +36,6 @@ class Endpoint {
 	}
 }
 
-// [from exercise readme] A cart contains an array of products, a recipient (person), delivery address, maybe payment method, maybe other attributes you see important
 class Cart {
 	constructor(id, customerId, products = [], status = statusLookup.created) {
 		this.id = id;

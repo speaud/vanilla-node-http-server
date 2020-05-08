@@ -1,4 +1,4 @@
-# TBD - started off as exercise...
+# TBD - ...
 
 ### Requirements
 * Docker 
@@ -29,17 +29,9 @@ Run `docker-compose up --build` then use Postman's Collection Runner to test the
 
 > The `--build` flag only required for first run or after changes to the ~/Dockerfile
 
-The following endpoints exists:
+The following endpoints exist:
 * GET /products
 * POST /carts
 * GET /carts/:cartId
 * PUT /carts/:cartId
 * PUT /carts/:cartId/products
-
-### Decisions Overview / About
-I did not want to use any packages to complete the first stage of this exercise. The initial exercise description was geared towards Node therefore the goal was to only use the Node Standard Library and JavaScript language features.
-
-##### Should have/More time?
-* Stand up a DB container mounted to local directory in place of just using memory
-* Rethink the tuple implementation of product id and quantity, workflow complicated when checking validity of both property values
-*  Better error handling/data validation, helper class or something
