@@ -35,3 +35,6 @@ The following endpoints exist:
 * GET /carts/:cartId
 * PUT /carts/:cartId
 * PUT /carts/:cartId/products
+
+### Decisions Overview / About
+Use only the Node Standard Library and JavaScript language features without dependencies (i.e., no `node_modules`).
