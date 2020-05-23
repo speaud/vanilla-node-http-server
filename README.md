@@ -1,4 +1,7 @@
-# Vanilla Node HTTP Server (without node_modules)
+# Vanilla Node (raw) HTTP Server - without dependencies
+
+### About
+Using only the [Node.js](nodejs.org/) Standard Library and the built-in JavaScript language features without any dependencies (i.e., no `node_modules`). 
 
 ### Requirements
 * Docker 
@@ -36,5 +39,12 @@ The following endpoints exist:
 * PUT /carts/:cartId
 * PUT /carts/:cartId/products
 
-### Decisions Overview / About
-Use only the Node Standard Library and JavaScript language features without dependencies (i.e., no `node_modules`).
+
+### Development Environment
+The Docker [CMD instruction](https://docs.docker.com/engine/reference/builder/#cmd) triggers a Node process which executes the `watch.js` file with a given `--runtime <EXECUTABLE>`.
+
+The `watch` program first starts the EXECUTABLE as a Node `child_process.fork()` method. [Node states this method is used specifically to spawn new Node processes](https://nodejs.org/docs/latest-v12.x/api/child_process.html#child_process_child_process_fork_modulepath_args_options).
+
+Then the `watch` program uses the Node `fs` module to watch the EXECUTABLE for changes. When a change occurs the `watch` program will kill then start a new process using the update source code.
+
+This logic provides the developer with a barebones "LiveReload" experience.
