@@ -1,4 +1,4 @@
-# TBD - ...
+# Vanilla Node HTTP Server (without node_modules)
 
 ### Requirements
 * Docker 
