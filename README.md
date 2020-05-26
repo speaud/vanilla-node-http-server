@@ -4,7 +4,7 @@
 Using only the [Node.js](nodejs.org/) Standard Library and the built-in JavaScript language features without any dependencies (i.e., no `node_modules`). 
 
 ### Requirements
-* Docker 
+* Docker (see below for specs)
 ```
 ~/node-stdlib-api-server (master) $ docker version
 Client: Docker Engine - Community
