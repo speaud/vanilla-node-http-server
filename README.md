@@ -6,7 +6,7 @@ Using only the [Node.js](nodejs.org/) Standard Library and the built-in JavaScri
 ### Requirements
 * Docker (see below for specs)
 ```
-~/node-stdlib-api-server (master) $ docker version
+~/ $ docker version
 Client: Docker Engine - Community
  Version:           18.09.2
  API version:       1.39
