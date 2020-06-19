@@ -1,7 +1,7 @@
-# Vanilla Node (raw) HTTP Server - without dependencies
+# Vanilla Node HTTP Server
 
 ### About
-This is a HTTP server with some modern API functionality. Written using only the [Node.js](nodejs.org/) Standard Library and the built-in JavaScript language features without any dependencies (i.e., no `node_modules`). 
+This is a HTTP server with some modern API functionality. Written using only the [Node.js](nodejs.org/) Standard Library and the built-in JavaScript language features without additional dependencies (i.e., no `node_modules`). 
 
 ### Future Plans
 Add a web socket example
