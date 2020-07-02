@@ -50,4 +50,4 @@ The `watch` program first starts the EXECUTABLE as a Node `child_process.fork()`
 
 Then the `watch` program uses the Node `fs` module to watch the EXECUTABLE for changes. When a change occurs the `watch` program will kill then start a new process using the update source code.
 
-This logic provides the developer with a barebones "LiveReload" experience.
+This logic provides the contributor with a barebones "LiveReload" developer experience without bloat (i.e., dependencies/libraries).
