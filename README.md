@@ -3,9 +3,6 @@
 ### About
 This is a HTTP server with some modern API functionality. Written using only the [Node.js](nodejs.org/) Standard Library and the built-in JavaScript language features without additional dependencies (i.e., no `node_modules`). 
 
-### Future Plans
-Add a web socket example
-
 ### Requirements
 * Docker (see below for specs)
 ```
@@ -36,12 +33,13 @@ Run `docker-compose up --build` then use Postman to test the API sequence: [![Ru
 > The `--build` flag only required for first run or after changes to the ~/Dockerfile
 
 The following endpoints exist:
-* GET /products
-* POST /carts
-* GET /carts/:cartId
-* PUT /carts/:cartId
-* PUT /carts/:cartId/products
-
+HTTP Method|Route|Description
+-|-|-
+GET|/contacts|List all contacts
+POST|/contacts|Create a new contact
+PUT|/contacts/{id}|Update a contact
+GET|/contacts/{id}|Get a specific contact
+DELETE|/contacts/{id}|Delete a contact
 
 ### Development Environment
 The Docker [CMD instruction](https://docs.docker.com/engine/reference/builder/#cmd) triggers a Node process which executes the `watch.js` file with a given `--runtime <EXECUTABLE>`.
