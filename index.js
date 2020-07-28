@@ -1,29 +1,76 @@
 const http = require('http');
 
-const { products: products_data, search_meta: products_meta } = require('./products.json')
-
 const { CONTAINER_API_PORT, LOCALHOST_API_PORT } = process.env
-
-const statusLookup = {
-	//cancel: 0,	?
-	created: 1,
-	valid: 2, // some condition met (e.g., more than N items)
-	ordered: 3
-	//delivered: 4	?
-}
 
 const logr = msg => console.log(`>> SERVER: ${msg}`)
 
+function reqBodyParser(b) {
+	let args = {}
+	b
+		.toString()
+		.split('&')
+		.map(x => x.split('='))
+		.forEach(a => args[a[0]] = a[1]);
+		
+	return args
+}
+
+function reqUrlIdParser(u) {
+	return parseInt(u.split('/')[2])
+}
+
+function autoIncrementId(c) {
+	const nextId = [...c].map(e => e[1]).length + 1
+
+	if (!contacts.get(nextId)) {
+		return nextId
+	} else {
+		throw new CustomError(`Contact already exists in pseudo DB (id=${nextId})`)
+	}
+}
+
+function notFound(req, res) {
+	const jsonResponse = new JSONResponse(null, { message: `Endpoint is not registered`, method: req.method, url: req.url })
+	jsonResponse.send(res, 404)
+}
+
+function flattenContact(c, updatedFields) {
+	let contact = {
+		id: c.id,
+		...c.name,
+		...c.address,
+		...c.phone,
+		email: c.email,
+		...updatedFields
+	}
+
+	return Object.keys(contact).map(e => contact[e])
+}
+
+class CustomError extends Error {
+	constructor(...params) {
+	  // Pass remaining arguments (including vendor specific ones) to parent constructor
+	  super(...params)
+  
+	  // Maintains proper stack trace for where our error was thrown (only available on V8)
+	  if (Error.captureStackTrace) {
+		Error.captureStackTrace(this, CustomError)
+	  }
+  
+	  this.name = 'CustomError'
+	  this.date = new Date()
+	}
+  }
+
 class JSONResponse {
-	constructor(meta, data, error) {
-		this.meta = meta
+	constructor(data, error) {
 		this.data = data
 		this.error = error
 	}
 
 	send(res, status) {
 		res.writeHead(status || 200, { 'Content-Type': 'application/json' })
-		const json = JSON.stringify(this)
+		const json = JSON.stringify(this.data)
 		res.end(json)
 	}
 }
@@ -36,142 +83,110 @@ class Endpoint {
 	}
 }
 
-class Cart {
-	constructor(id, customerId, products = [], status = statusLookup.created) {
+class Contact {
+	constructor(id, first_name, middle_name, last_name, street, city, state, zip, phone_number, phone_type, email) {
 		this.id = id;
-		this.customerId = customerId;
-		this.products = products; // entries treated as tuple [[product id, quanity], ...]
-		this.status = status;
+		this.name = {
+			first_name: first_name,
+			middle_name: middle_name,
+			last_name: last_name
+		};
+		this.address = {
+			street: street,
+			city: city,
+			state: state,
+			zip: zip
+
+		}
+		this.phone = {
+			phone_number: phone_number,
+			phone_type: phone_type,
+		},
+		this.emai = email
 	}
 }
 
-class Customer {
-	constructor(id, name, address) {
-		this.id = id;
-		this.name = name;
-		this.address = address;
-	}
-}
+let contacts = new Map();
 
-let endpoints = [
-	new Endpoint('GET', '/products', getProducts),
-	new Endpoint('POST', '/carts', createCart),
-	new Endpoint('GET', '/carts/[0-9]+', getCart),
-	new Endpoint('PUT', '/carts/[0-9]+', checkoutCart),
-	new Endpoint('PUT', '/carts/[0-9]+/products', addProductsToCart)
-]
+contacts.set(1, new Contact(1, 'Jay', 'John', 'Smith', '123 Main', 'Philly', 'PA', '19107', '1231231234', 'cell', 'noreply@whoknows.com'))
+contacts.set(2, new Contact(2, 'May', 'Marie', 'Smith', '123 Main', 'Philly', 'PA', '19107', '4443332222', 'cell', 'may@whoknows.com'))
 
-let carts = []
+function getContacts(req, res) {
+	const data = [...contacts].map(e => e[1])
+	const jsonResponse = new JSONResponse(data)
 
-let customers = [
-	new Customer(1, `Phil Adelphia`, `123 Broad St.`)
-]
-
-function reqBodyParser(buffer) {
-	let args = {}
-	buffer
-		.toString()
-		.split('&')
-		.map(x => x.split('='))
-		.forEach(a => args[a[0]] = a[1]);
-		
-	return args
-}
-
-function notFound(req, res) {
-	const jsonResponse = new JSONResponse(null, null, { message: `Endpoint is not registered`, method: req.method, url: req.url })
-	jsonResponse.send(res, 404)
-}
-
-function getProducts(req, res) {
-	const jsonResponse = new JSONResponse(products_meta, products_data)
 	jsonResponse.send(res)
 }
 
-function createCart(req, res) {
+function createContact(req, res) {
+	const nextId = autoIncrementId(contacts)
+
 	req.on('data', chunk => {
-		const { customerId } = reqBodyParser(chunk)
-
-		const customer = customers.filter(c => c.id == customerId)
-		if (customer.length === 0) {
-			const jsonResponse = new JSONResponse(null, null, { message: 'Invalid customer id', customerId: customerId })
-			jsonResponse.send(res)
-			return
-		}
-
-		const hasActiveCart = carts.filter(c => c.customerId == customerId && c.status != statusLookup.ordered)
-		if (hasActiveCart.length != 0) {
-			const jsonResponse = new JSONResponse({ activeCart: hasActiveCart }, null, { message: 'Customer has active cart', customerId: customerId })
-			jsonResponse.send(res)
-			return
-		}
-
-		const createdCart = new Cart(carts.length + 1, parseInt(customerId))
+		const data = reqBodyParser(chunk)
+		console.log(data)
 	
-		carts.push(createdCart)
-	
-		const jsonResponse = new JSONResponse({ totalActiveCartCount: carts.length }, [createdCart])
+		contacts.set(nextId, new Contact(nextId, data.first_name, data.middle_name, data.last_name, data.street, data.city, data.state, data.zip, data.phone_number, data.phone_type, data.email))
+		
+		const contact = contacts.get(nextId)
+		const jsonResponse = contact ? new JSONResponse(contact) : new JSONResponse({ message: 'Contact was not created' })
+
 		jsonResponse.send(res)
 	})
 }
 
-function getCart(req, res) {
-	const cartId = parseInt(req.url.split('/')[2])
-	const cart = carts.filter(c => c.id == cartId)
-	
-	const jsonResponse = new JSONResponse({}, cart)
+function updateContact(req, res) {
+	const contactId = reqUrlIdParser(req.url)
+	let contact = contacts.get(contactId)
+
+	req.on('data', chunk => {
+		const data = reqBodyParser(chunk)
+		console.log(data)
+
+		const updatedContact = flattenContact(contact, data)
+
+		contacts.set(contactId, new Contact(...updatedContact))
+		contact = contacts.get(contactId)
+		
+		const jsonResponse = contact ? new JSONResponse(contact) : new JSONResponse({ message: 'Contact does not exist' })
+		jsonResponse.send(res)
+	})	
+}
+
+function getContact(req, res) {
+	const contactId = reqUrlIdParser(req.url)
+	const contact = contacts.get(contactId)
+
+	const jsonResponse = contact ? new JSONResponse(contact) : new JSONResponse({ message: 'Contact not found' })
+
 	jsonResponse.send(res)
 }
 
-function checkoutCart(req, res) {
-	const cartId = parseInt(req.url.split('/')[2])
+function deleteContact(req, res) {
+	const contactId = reqUrlIdParser(req.url)
+	const contact = contacts.get(contactId)
 
-	carts.forEach(c => {
-		if (c.id == cartId) {
-			c.status = statusLookup.ordered
+	try {
+		if (contact) {
+			contacts.delete(contactId)
 		}
-		return c
-	})
+	} catch (error) {
+		const jsonResponse = new JSONResponse({ message: 'Error contact was not deleted' }, error)
 
-	const jsonResponse = new JSONResponse({}, carts.filter(c => c.id == cartId)[0])
-	jsonResponse.send(res)	
+		return jsonResponse.send(res)
+	}
+	
+	const jsonResponse = contact ? new JSONResponse({ message: 'Contact was deleted' }) : new JSONResponse({ message: 'Contact not found' })
+
+	jsonResponse.send(res)
 }
 
-function addProductsToCart(req, res) {
-	req.on('data', chunk => {
-		let { productIds, quantities } = reqBodyParser(chunk)
-		productIds = unescape(productIds).split(',')
-		quantities = unescape(quantities).split(',')
-
-		if (productIds.length != quantities.length) {
-			const jsonResponse = new JSONResponse({ productIds, quantities }, null, { message: `Invalid request body parameters. Entires do not match, missing 'product-quanity' pair. ` })
-			jsonResponse.send(res)
-		}
-		
-		const cartId = parseInt(req.url.split('/')[2])
-		const cartIsActive = carts.filter(c => c.id == cartId && c.status != statusLookup.ordered)
-
-		if (cartIsActive.length === 0) {
-			const jsonResponse = new JSONResponse({ cardId: cartId }, null, { message: 'Cart does not exist' })
-			jsonResponse.send(res)
-		}
-		
-		let pqs = productIds.map((p, i) => [p, quantities[i]])
-		// @todo validate the productId and quanity as Q (Q xref with products.product.quanity)
-		
-		carts = carts.filter(c => {
-			if (c.id == cartId) {
-				c.products = [...c.products, ...pqs]
-				c.status = statusLookup.valid
-			}
-
-			return c
-		})
-		
-		const jsonResponse = new JSONResponse({}, carts)
-		jsonResponse.send(res)
-	})
-}
+const endpoints = [
+	new Endpoint('GET', '/contacts', getContacts),
+	new Endpoint('POST', '/contacts', createContact),
+	new Endpoint('PUT', '/contacts/[0-9]+', updateContact),
+	new Endpoint('GET', '/contacts/[0-9]+', getContact),
+	new Endpoint('DELETE', '/contacts/[0-9]+', deleteContact)
+]
 
 http
 	.createServer((req, res) => {

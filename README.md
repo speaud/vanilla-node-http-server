@@ -31,7 +31,7 @@ Server: Docker Engine - Community
   ```
 
 ### To run
-Run `docker-compose up --build` then use Postman's Collection Runner to test the API sequence: [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/3aedd494f3505f43766d#?env%5BNSAS%5D=W3sia2V5IjoiQVBJIiwidmFsdWUiOiJsb2NhbGhvc3Q6NzAwMSIsImVuYWJsZWQiOnRydWV9LHsia2V5IjoiQ1VTVE9NRVJfSUQiLCJ2YWx1ZSI6IjEiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6IkNBUlRfSUQiLCJ2YWx1ZSI6IjEiLCJlbmFibGVkIjp0cnVlfSx7ImtleSI6IlBST0RVQ1RfSURfMSIsInZhbHVlIjoiIiwiZW5hYmxlZCI6ZmFsc2V9LHsia2V5IjoiUFJPRFVDVF9JRF8wIiwidmFsdWUiOjEwNzQsImVuYWJsZWQiOnRydWV9LHsia2V5IjoiUFJPRFVDVF9JRF8xIiwidmFsdWUiOjI1ODgsImVuYWJsZWQiOnRydWV9XQ==)
+Run `docker-compose up --build` then use Postman to test the API sequence: [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/3aedd494f3505f43766d)
 
 > The `--build` flag only required for first run or after changes to the ~/Dockerfile
 
