@@ -46,8 +46,8 @@ The following endpoints exist:
 ### Development Environment
 The Docker [CMD instruction](https://docs.docker.com/engine/reference/builder/#cmd) triggers a Node process which executes the `watch.js` file with a given `--runtime <EXECUTABLE>`.
 
-The `watch` program first starts the EXECUTABLE as a Node `child_process.fork()` method. [Node states this method is used specifically to spawn new Node processes](https://nodejs.org/docs/latest-v12.x/api/child_process.html#child_process_child_process_fork_modulepath_args_options).
+The `watch` program first starts the `<EXECUTABLE>` as a Node `child_process.fork()` method. [Node states this method is used specifically to spawn new Node processes](https://nodejs.org/docs/latest-v12.x/api/child_process.html#child_process_child_process_fork_modulepath_args_options).
 
-Then the `watch` program uses the Node `fs` module to watch the EXECUTABLE for changes. When a change occurs the `watch` program will kill then start a new process using the update source code.
+Then the `watch` program uses the Node `fs` module to watch the `<EXECUTABLE>` for changes. When a change occurs the `watch` program will kill then start a new process using the update source code.
 
 This logic provides the contributor with a barebones "LiveReload" developer experience without bloat (i.e., dependencies/libraries).
