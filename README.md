@@ -1,5 +1,7 @@
 # Vanilla Node HTTP Server
 
+**DO NOT USE THIS AS A PRODUCTION INSTANCE, BARE-BONES EXAMPLE USING ONLY JS/NODE, FOR FUN**
+
 ### About
 This is a HTTP server with some modern API functionality. Written using only the [Node.js](nodejs.org/) Standard Library and the built-in JavaScript language features without additional dependencies (i.e., no `node_modules`). 
 
